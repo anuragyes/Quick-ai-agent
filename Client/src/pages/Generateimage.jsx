@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import { Image, Sparkles } from 'lucide-react';
 import axios from 'axios';
@@ -15,7 +16,6 @@ const styles = [
   'Portrait style',
 ];
 
-// Set base URL from .env or fallback
 axios.defaults.baseURL = import.meta.env.VITE_BASE_URL || 'http://localhost:3000';
 
 const Generateimage = () => {
@@ -25,6 +25,15 @@ const Generateimage = () => {
   const [generatedImage, setGeneratedImage] = useState('');
   const [loading, setLoading] = useState(false);
   const { getToken } = useAuth();
+
+   const handleDownload = () => {
+    const link = document.createElement('a');
+    link.href = imageUrl;
+    link.download = 'my-image.jpg'; // filename you want for download
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -39,7 +48,6 @@ const Generateimage = () => {
       setGeneratedImage('');
 
       const fullPrompt = `Generate an image of ${prompt} in the style of ${selectedStyle}`;
-
       const token = await getToken();
 
       const { data } = await axios.post(
@@ -56,7 +64,7 @@ const Generateimage = () => {
       );
 
       if (data.success) {
-        setGeneratedImage(data.content); // expected: image URL
+        setGeneratedImage(data.content);
       } else {
         alert(data.message || 'Image generation failed.');
       }
@@ -71,6 +79,7 @@ const Generateimage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-slate-100 flex items-start justify-center p-10">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-6xl">
+
         {/* LEFT: Form Section */}
         <form
           onSubmit={handleSubmit}
@@ -139,6 +148,16 @@ const Generateimage = () => {
               </>
             )}
           </button>
+
+          {/* ✅ Download Button (only if image is generated) */}
+          {generatedImage && (
+            <a   
+              onClick={handleDownload}
+              className="mt-4 w-full text-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition block"
+            >
+              Download Image
+            </a>
+          )}
         </form>
 
         {/* RIGHT: Generated Image Display */}
@@ -167,5 +186,3 @@ const Generateimage = () => {
 };
 
 export default Generateimage;
-
-

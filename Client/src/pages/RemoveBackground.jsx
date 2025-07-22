@@ -1,11 +1,11 @@
-
-
-
 import React, { useState } from 'react';
 import { useAuth } from '@clerk/clerk-react'; // Clerk auth
 import { UploadCloud } from 'lucide-react';
 import axios from 'axios';
-axios.defaults.baseURL = import.meta.env.VITE_BASE_URL || 'http://localhost:3000'; // Use your backend URL here
+
+// Set base URL for backend
+axios.defaults.baseURL = import.meta.env.VITE_BASE_URL || 'http://localhost:3000';
+
 const RemoveBackground = () => {
   const [imageSrc, setImageSrc] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
@@ -53,7 +53,7 @@ const RemoveBackground = () => {
       );
 
       if (response.data.success) {
-        setResultImage(response.data.content);
+        setResultImage(response.data.content); // base64 or URL
       } else {
         alert(response.data.message || 'Failed to remove background');
       }
@@ -65,8 +65,20 @@ const RemoveBackground = () => {
     }
   };
 
+  const handleDownload = () => {
+    if (!resultImage) return;
+
+    const link = document.createElement('a');
+    link.href = resultImage;
+    link.download = 'background-removed.png';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-slate-100 flex flex-col md:flex-row items-start justify-center gap-10 p-8">
+      {/* Upload Section */}
       <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
         <h2 className="text-2xl font-bold text-gray-800 mb-4">Remove Background</h2>
 
@@ -102,14 +114,23 @@ const RemoveBackground = () => {
         </button>
       </div>
 
+      {/* Result Section */}
       <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md flex flex-col items-center justify-center">
         <h2 className="text-2xl font-bold text-gray-800 mb-4">Result</h2>
         {resultImage ? (
-          <img
-            src={resultImage}
-            alt="Result"
-            className="rounded-md border shadow-sm w-full"
-          />
+          <>
+            <img
+              src={resultImage}
+              alt="Result"
+              className="rounded-md border shadow-sm w-full"
+            />
+            <a
+              onClick={handleDownload}
+              className="mt-4 w-full text-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition block cursor-pointer"
+            >
+              Download Image
+            </a>
+          </>
         ) : (
           <p className="text-gray-400 text-sm text-center">
             Upload an image and click "Remove Background" to see the result here.
@@ -121,4 +142,3 @@ const RemoveBackground = () => {
 };
 
 export default RemoveBackground;
-

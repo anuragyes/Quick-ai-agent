@@ -1,5 +1,4 @@
-import React,{useEffect} from 'react'
-// import React from 'react'
+ import React from 'react'
 import Home from './pages/Home'
 import { Routes, Route } from 'react-router-dom'
 import Layout from './pages/Layout'
@@ -11,7 +10,6 @@ import RemoveBackground from './pages/RemoveBackground'
 import RemoveObject from './pages/RemoveObject'
 import ReviewResume from './pages/ReviewResume'
 import { Toaster } from 'react-hot-toast'
-import { useAuth } from '@clerk/clerk-react'
 import Blog from './pages/Blog'
 import Community from './pages/Community'
 
@@ -20,14 +18,7 @@ import Community from './pages/Community'
 
 const App = () => {
 
-  const { getToken } = useAuth();
-
-  useEffect(() => {
-
-    getToken().then((token) => console.log(token))
-
-  }, [])
-
+  
   return (
     <>
 
